@@ -10,7 +10,10 @@
 
 import com.formdev.flatlaf.FlatDarkLaf
 import java.awt.*
-import java.awt.event.*
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 import javax.swing.*
 import javax.swing.event.ChangeEvent
 import javax.swing.event.ChangeListener
@@ -24,13 +27,19 @@ fun main() {
     MainWindow()            // Create and show the UI
 }
 
+fun copyToClipboard(text: String) {
+    val stringSelection = StringSelection(text)
+    val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+    clipboard.setContents(stringSelection, null)
+}
+
 
 /**
  * Main UI window (view)
  * Defines the UI and responds to events
  * The app model should be passwd as an argument
  */
-class MainWindow : JFrame(), ActionListener, KeyListener, ChangeListener {
+class MainWindow : JFrame(), ActionListener, ChangeListener {
 
     // Fields to hold the UI elements
     private lateinit var colourLabel: JLabel
@@ -46,7 +55,7 @@ class MainWindow : JFrame(), ActionListener, KeyListener, ChangeListener {
 
     // Store the colour value
     private var _colour = Color(255, 255, 255)
-    
+
 
     /**
      * Configure the UI and display it
@@ -92,7 +101,6 @@ class MainWindow : JFrame(), ActionListener, KeyListener, ChangeListener {
         r = JSpinner(SpinnerNumberModel(255, 0, 255, 1))
         r.bounds = Rectangle(70, 260, 80, 30)
         r.font = defaultFont
-        r.addKeyListener(this)
         r.addChangeListener(this)
         add(r)
 
@@ -104,7 +112,6 @@ class MainWindow : JFrame(), ActionListener, KeyListener, ChangeListener {
         g = JSpinner(SpinnerNumberModel(255, 0, 255, 1))
         g.bounds = Rectangle(70, 300, 80, 30)
         g.font = defaultFont
-        g.addKeyListener(this)
         g.addChangeListener(this)
         add(g)
 
@@ -116,9 +123,27 @@ class MainWindow : JFrame(), ActionListener, KeyListener, ChangeListener {
         b = JSpinner(SpinnerNumberModel(255, 0, 255, 1))
         b.bounds = Rectangle(70, 340, 80, 30)
         b.font = defaultFont
-        b.addKeyListener(this)
         b.addChangeListener(this)
         add(b)
+
+        hexLabel = JLabel("Hex")
+        hexLabel.bounds = Rectangle(40, 380, 90, 30)
+        hexLabel.font = defaultFont
+        add(hexLabel)
+
+        Hex = JTextField("#FFFFFF")
+        Hex.bounds = Rectangle(80, 380, 110, 30)
+        Hex.alignmentX = Component.LEFT_ALIGNMENT
+        Hex.font = defaultFont
+        Hex.isEditable = false
+        add(Hex)
+
+        copy = JButton("\uDCCB")
+        copy.bounds = Rectangle(200, 380, 40, 30)
+        copy.font = defaultFont
+        copy.addActionListener(this)
+        copy.toolTipText = "Copy to clipboard"
+        add(copy)
     }
 
 
@@ -127,24 +152,23 @@ class MainWindow : JFrame(), ActionListener, KeyListener, ChangeListener {
      */
     override fun actionPerformed(e: ActionEvent?) {
         when (e?.source) {
-
+            copy -> copyToClipboard(Hex.text)
         }
     }
 
-    override fun keyTyped(e: KeyEvent?) {
-        
-    }
-
-    override fun keyPressed(e: KeyEvent?) {
-        e?.consume()
-    }
-
-    override fun keyReleased(e: KeyEvent?) {
-        e?.consume()
-    }
-
     override fun stateChanged(e: ChangeEvent?) {
+        val R = r.value as? Int ?: 0
+        val G = g.value as? Int ?: 0
+        val B = b.value as? Int ?: 0
 
+//        r.background = Color(R, 0, 0)
+//        g.background = Color(0, G, 0)
+//        b.background = Color(0, 0, B)
+
+        _colour = Color(R, G, B)
+        colourLabel.background = _colour
+        val hex = String.format("#%02X%02X%02X", R, G, B)
+        Hex.text = hex
     }
 
 }
