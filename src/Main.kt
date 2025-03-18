@@ -10,10 +10,9 @@
 
 import com.formdev.flatlaf.FlatDarkLaf
 import java.awt.*
+import java.awt.datatransfer.StringSelection
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 import javax.swing.*
 import javax.swing.event.ChangeEvent
 import javax.swing.event.ChangeListener
@@ -101,6 +100,8 @@ class MainWindow : JFrame(), ActionListener, ChangeListener {
         r = JSpinner(SpinnerNumberModel(255, 0, 255, 1))
         r.bounds = Rectangle(70, 260, 80, 30)
         r.font = defaultFont
+        r.foreground = Color.WHITE
+        r.background = Color(255, 0, 0)
         r.addChangeListener(this)
         add(r)
 
@@ -112,6 +113,8 @@ class MainWindow : JFrame(), ActionListener, ChangeListener {
         g = JSpinner(SpinnerNumberModel(255, 0, 255, 1))
         g.bounds = Rectangle(70, 300, 80, 30)
         g.font = defaultFont
+        g.foreground = Color.WHITE
+        g.background = Color(0, 255, 0)
         g.addChangeListener(this)
         add(g)
 
@@ -123,6 +126,8 @@ class MainWindow : JFrame(), ActionListener, ChangeListener {
         b = JSpinner(SpinnerNumberModel(255, 0, 255, 1))
         b.bounds = Rectangle(70, 340, 80, 30)
         b.font = defaultFont
+        b.foreground = Color.WHITE
+        b.background = Color(0, 0, 255)
         b.addChangeListener(this)
         add(b)
 
@@ -161,15 +166,14 @@ class MainWindow : JFrame(), ActionListener, ChangeListener {
         val G = g.value as? Int ?: 0
         val B = b.value as? Int ?: 0
 
-//        r.background = Color(R, 0, 0)
-//        g.background = Color(0, G, 0)
-//        b.background = Color(0, 0, B)
+        r.background = Color(R, 0, 0)
+        g.background = Color(0, G, 0)
+        b.background = Color(0, 0, B)
 
         _colour = Color(R, G, B)
         colourLabel.background = _colour
-        val hex = String.format("#%02X%02X%02X", R, G, B)
+        val hex = String.format("#%02X%02X%02X", R, G, B) // %02X means format the number as a 2 digit hexadecimal
         Hex.text = hex
     }
-
 }
 
